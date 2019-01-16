@@ -15,7 +15,11 @@ let userCount = 0;
 io.on('connection', (socket) =>{
     userCount++;
     console.log("new user connected");
-    socket.emit('newMessage',generateMessage('Admin','Welcome to fossil chat'));
+    if(userCount == 1)
+         socket.emit('newMessage',generateMessage('Admin','I am sorry to inform you that you are alone in the room.'));
+    else
+        socket.emit('newMessage',generateMessage('Admin','Welcome to fossil chat. Number present in room:'+userCount));
+    
     socket.broadcast.emit('newMessage', generateMessage('Admin','New user connected! Usercount:'+userCount));
    
  
@@ -31,8 +35,13 @@ io.on('connection', (socket) =>{
         // })
     });
 
-    socket.on('disconnect', (socket)=>{
+    socket.on('disconnect', (dsocket)=>{
         userCount--;
+        if(userCount == 1)
+             io.emit('newMessage',generateMessage('Admin','I am sorry to inform you that you have been left alone in the room!'));
+        else
+             io.emit('newMessage',generateMessage('Admin','A user has left the room the number of users is now:'+userCount));
+   
          console.log('socket disconnected')
     });
 });
