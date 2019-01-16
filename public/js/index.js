@@ -1,7 +1,12 @@
+
 let socket = io();
 
 socket.on('connect', function () {
     console.log('connected to server');
+   
+    let li = jQuery('<li></li>');
+    li.load('wall.txt');
+    jQuery('#messages').append(li);
 
     // socket.emit('createMessage', {
     //     from:'Dunkasaur',
@@ -26,6 +31,7 @@ jQuery('#message-form').on('submit',function(e) {
         from:'user',
         text:jQuery('[name=message]').val()
     }, function(){
-
+       jQuery('[name=message]').val("") ;
     }); 
+    var locationButton = jQuery('#send-location')
 });
