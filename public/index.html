@@ -9,12 +9,21 @@
 </head>
 <body>
     <h2>--Welcome--</h2>
- 
+  
     <ul id="messages"></ul>
+    
+    <form id="name-form">
+        WHAT dino-name do you go by ??</br>
+        <input name="user" type="text" placeholder="Enter your DINO name!">
+        
+    </form>
+    
     <form id="message-form">
+         WHAT do you say ??</br>
         <input name="message" type="text" placeholder="Message">
         <button>Send</button>
     </form>
+
     <button id="send-location">Send Location</button>
 
     <script src = "/socket.io/socket.io.js"> </script>

@@ -27,11 +27,24 @@ socket.on('newMessage', function(message) {
 
 jQuery('#message-form').on('submit',function(e) {
     e.preventDefault();
+    let user = jQuery('[name=user]').val();
     socket.emit('createMessage', {
-        from:'user',
+        from:user,
         text:jQuery('[name=message]').val()
     }, function(){
        jQuery('[name=message]').val("") ;
     }); 
-    var locationButton = jQuery('#send-location')
+
+});
+
+var locationButton = jQuery('#send-location');
+locationButton.on('click', function(){
+    if(!navigator.geolocation){
+        return alert('Geolocation not supported by your browser.');
+    }
+    navigator.geolocation.getCurrentPosition(function(position){
+        console.log(position);
+    }, function(){
+        alert('Unable to fetch location');
+    });
 });
