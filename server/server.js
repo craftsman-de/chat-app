@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 const app = new express();
 let server = http.createServer(app)
 let io = socketIO(server);
-const {generateMessage} = require('./utils/message');
+const {generateMessage,generateLocationMessage} = require('./utils/message');
 
 app.use(express.static(publicPath));
 let userCount = 0;
@@ -36,6 +36,10 @@ io.on('connection', (socket) =>{
         //     createAt:new Date().getTime()
         // })
     });
+
+    socket.on('createLocationMessage', coords => {
+        io.emit('newLocationMessage', generateLocationMessage(coords.name, coords.latitude , coords.longitude));
+    })
 
     socket.on('disconnect', (dsocket)=>{
         userCount--;

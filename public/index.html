@@ -5,29 +5,37 @@
     
     <title>Fossil</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
-    <h2>--Welcome--</h2>
-  
-    <ul id="messages"></ul>
+<body class ="chat">
+    <div class = "chat__sidebar">
+        <h3>Dino-users</h3>
+        <div id="users"></div>
+    </div>
+
+    <div class="chat__main">
     
-    <form id="name-form">
-        WHAT dino-name do you go by ??</br>
-        <input name="user" type="text" placeholder="Enter your DINO name!">
         
-    </form>
-    
-    <form id="message-form">
-         WHAT do you say ??</br>
-        <input name="message" type="text" placeholder="Message">
-        <button>Send</button>
-    </form>
-
+    <ul id="messages" class="chat__messages"></ul>
+   
+    <div class="chat__footer">
+            <form id="name-form">
+               
+                    <input name="user"  type="text" placeholder="Enter your DINO name!">
+                    
+                </form>
+                
+                <form id="message-form">
+            
+                    <input name="message" type="text" placeholder="Message" autocomplete="off">
+                    <button>Send</button>
+                </form>
     <button id="send-location">Send Location</button>
-
+    </div>
+    </div>
     <script src = "/socket.io/socket.io.js"> </script>
     <script src = "/js/libs/jquery-3.3.1.js"></script>
+    <script src="js/libs/moment.js"></script>
     <script src = "/js/index.js"> </script> 
 </body>
 </html>
