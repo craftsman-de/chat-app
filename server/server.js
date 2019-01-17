@@ -4,32 +4,49 @@ const express = require('express');
 const socketIO = require('socket.io');
 const fs = require('fs');
 
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 const app = new express();
-let server = http.createServer(app)
-let io = socketIO(server);
+const server = http.createServer(app)
+const io = socketIO(server);
 const {generateMessage,generateLocationMessage} = require('./utils/message');
+const {isRealString} = require('./utils/validation');
+const {Users} = require('./utils/users');
+
+let users = new Users();
+
 
 app.use(express.static(publicPath));
-let userCount = 0;
+
 io.on('connection', (socket) =>{
-    userCount++;
     console.log("new user connected");
-    if(userCount == 1)
-         socket.emit('newMessage',generateMessage('Admin','I am sorry to inform you that you are alone in the room.'));
-    else
-        socket.emit('newMessage',generateMessage('Admin','Welcome to fossil chat. Number present in room:'+userCount));
     
-    socket.broadcast.emit('newMessage', generateMessage('Admin','New user connected! Usercount:'+userCount));
+    socket.on('join', (params, callback)=>{
+
+        if(!isRealString(params.name) || !isRealString(params.room)){
+            callback('Name and room name are required.');
+        }
+
+        socket.join(params.room);
+        users.removeUser(socket.id);
+        users.addUser(socket.id,params.name,params.room);
+
+        io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+        socket.emit('newMessage',generateMessage('Admin','Welcome to fossil chat.'));
+      //  console.log(params.name);
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin' , params.name+' has joined the room'));
    
- 
-    
+        callback();
+    });
+
     socket.on('createMessage', (newMessage, callback) => {
-        console.log('newMessage:',newMessage);
-        fs.appendFileSync(__dirname +'/../public/wall.txt', newMessage.from + ':' +newMessage.text + '<br>' +'\n');
-        io.emit('newMessage', generateMessage(newMessage.from,newMessage.text));
-        callback('*server message*');
+       fs.appendFileSync(__dirname +'/../public/wall.txt', newMessage.from + ':' +newMessage.text + '<br>' +'\n');
+        let user = users.getUser(socket.id);
+        if(user && isRealString(newMessage.text)){
+            io.to(user.room).emit('newMessage', generateMessage(user.name,  newMessage.text));
+        }
+       callback('');
         // socket.broadcast.emit('newMessage', {
         //     from:newMessage.from,
         //     text:newMessage.text,
@@ -37,18 +54,22 @@ io.on('connection', (socket) =>{
         // })
     });
 
+ 
     socket.on('createLocationMessage', coords => {
-        io.emit('newLocationMessage', generateLocationMessage(coords.name, coords.latitude , coords.longitude));
+        let user = users.getUser(socket.id);
+        if(user){
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude , coords.longitude));
+        }
+
+        
     })
 
     socket.on('disconnect', (dsocket)=>{
-        userCount--;
-        if(userCount == 1)
-             io.emit('newMessage',generateMessage('Admin','I am sorry to inform you that you have been left alone in the room!'));
-        else
-             io.emit('newMessage',generateMessage('Admin','A user has left the room the number of users is now:'+userCount));
-   
-         console.log('socket disconnected')
+        let user = users.removeUser(socket.id); 
+        if(user){
+            io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+            io.to(user.room).emit('newMessage', generateMessage('Admin', user.name+' has left the building'));
+        }
     });
 });
 server.listen(port, ()=>{
