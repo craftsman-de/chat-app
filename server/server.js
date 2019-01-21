@@ -8,6 +8,12 @@ const axios = require('axios');
 const keys = require('./utils/keys');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
+let key;
+if(port==3000){
+    key = require('./utils/keys').mapquestKey;
+}else
+     key = process.env.MAPQUESTKEY;
+
 const app = new express();
 const server = http.createServer(app)
 const io = socketIO(server);
@@ -63,7 +69,7 @@ io.on('connection', (socket) =>{
     socket.on('createLocationMessage', async coords => {
         let user = users.getUser(socket.id);
         if(user){
-            let url = 'http://www.mapquestapi.com/geocoding/v1/reverse?key='+keys.mapquestKey+ '&location='+coords.latitude+','+coords.longitude;
+            let url = 'http://www.mapquestapi.com/geocoding/v1/reverse?key='+key+ '&location='+coords.latitude+','+coords.longitude;
             try{
                 let geoInfo = await axios.get(url);
                 

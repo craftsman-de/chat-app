@@ -1,5 +1,5 @@
 let socket = io();
-let meObj = {};
+
 
 function scrollToBottom () {
     let message = jQuery('#messages');
