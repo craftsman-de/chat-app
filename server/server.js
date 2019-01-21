@@ -5,7 +5,7 @@ const socketIO = require('socket.io');
 const fs = require('fs');
 const axios = require('axios');
 
-const keys = require('./utils/keys');
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 let key;
@@ -19,10 +19,11 @@ const {isRealString} = require('./utils/validation');
 const {Users} = require('./utils/users');
 
 let users = new Users();
-//let rooms = [];
-// if(process.env.NODE_ENV != 'production' ){
-//     key = require('./utils/keys').mapquestKey;
-// }else
+let rooms = [];
+
+if(process.env.NODE_ENV != 'production' ){
+    key = require('./utils/keys').mapquestKey;
+}else
      key = process.env.MAPQUESTKEY;
 
 app.use(express.static(publicPath));
