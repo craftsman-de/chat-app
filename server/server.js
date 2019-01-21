@@ -9,10 +9,7 @@ const keys = require('./utils/keys');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 let key;
-if(process.env.NODE_ENV != 'production' ){
-    key = require('./utils/keys').mapquestKey;
-}else
-     key = process.env.MAPQUESTKEY;
+
 //console.log(process.env.NODE_ENV);
 const app = new express();
 const server = http.createServer(app)
@@ -23,7 +20,11 @@ const {Users} = require('./utils/users');
 
 let users = new Users();
 //let rooms = [];
-
+if(process.env.NODE_ENV != 'production' ){
+    key = require('./utils/keys').mapquestKey;
+}else
+     key = process.env.MAPQUESTKEY;
+     
 app.use(express.static(publicPath));
 
 io.on('connection', (socket) =>{
