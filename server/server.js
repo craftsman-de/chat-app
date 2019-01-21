@@ -20,11 +20,11 @@ const {Users} = require('./utils/users');
 
 let users = new Users();
 //let rooms = [];
-if(process.env.NODE_ENV != 'production' ){
-    key = require('./utils/keys').mapquestKey;
-}else
+// if(process.env.NODE_ENV != 'production' ){
+//     key = require('./utils/keys').mapquestKey;
+// }else
      key = process.env.MAPQUESTKEY;
-     
+
 app.use(express.static(publicPath));
 
 io.on('connection', (socket) =>{
