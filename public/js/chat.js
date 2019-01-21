@@ -70,23 +70,12 @@ socket.on('newMessage', function(message) {
 });
 socket.on('newLocationMessage', function(message) {
 
-    let formattedTime = new moment(message.createdAt).format('h:mm a')
-    let template = jQuery('#location-message-template').html();
-    let html = Mustache.render(template,{
-        text:message.text,
-        from:message.from,
-        createdAt:formattedTime,
-        url:message.url
-    });
-    jQuery('#messages').append(html);
+    jQuery(".chat__main").css('background-image', 'url('+message.url+')');
+  
+  
+   
     scrollToBottom();
-    // let li = jQuery('<li></li>');
-    // let a = jQuery('<a target=\"_blank\">My current Location</a>');
-    // li.text(message.from +':');
-    // a.attr('href', message.url);
-    // li.append(a).append(' sent at ' +formattedTime);
-    
-    // jQuery('#messages').append(li);
+
 })
 let messageTextbox = jQuery('[name=message]');
 let nameTextbox = jQuery('[name=user]');

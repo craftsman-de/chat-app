@@ -1,2 +1,3 @@
 node_modules/
 public/wall.txt
+server/utils/keys.js

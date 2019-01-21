@@ -5,8 +5,8 @@ let date = new moment();
 
 console.log(date.format('h:mm a'));
 
-let array = [3,4,6];
-array.splice(1,1);
-
-console.log(array);
-console.log(array.length);
+let array = [3,4,6,4];
+//array.splice(1,1);
+let newarray = [ ... Set(array) ];
+console.log(newarray);
+console.log(newarray.length);

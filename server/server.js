@@ -3,8 +3,9 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 const fs = require('fs');
+const axios = require('axios');
 
-
+const keys = require('./utils/keys');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 const app = new express();
@@ -15,25 +16,29 @@ const {isRealString} = require('./utils/validation');
 const {Users} = require('./utils/users');
 
 let users = new Users();
-
+//let rooms = [];
 
 app.use(express.static(publicPath));
 
 io.on('connection', (socket) =>{
     console.log("new user connected");
     
+    let rooms = users.getRooms();
+    socket.emit('roomList', rooms);
+
     socket.on('join', (params, callback)=>{
 
         if(!isRealString(params.name) || !isRealString(params.room)){
             callback('Name and room name are required.');
         }
-
+        
         socket.join(params.room);
+
         users.removeUser(socket.id);
         users.addUser(socket.id,params.name,params.room);
 
         io.to(params.room).emit('updateUserList', users.getUserList(params.room));
-        socket.emit('newMessage',generateMessage('Admin','Welcome to fossil chat.'));
+        socket.emit('newMessage',generateMessage('Admin','Welcome to the '+params.room + ' room'));
       //  console.log(params.name);
         socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin' , params.name+' has joined the room'));
    
@@ -55,10 +60,24 @@ io.on('connection', (socket) =>{
     });
 
  
-    socket.on('createLocationMessage', coords => {
+    socket.on('createLocationMessage', async coords => {
         let user = users.getUser(socket.id);
         if(user){
-            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude , coords.longitude));
+            let url = 'http://www.mapquestapi.com/geocoding/v1/reverse?key='+keys.mapquestKey+ '&location='+coords.latitude+','+coords.longitude;
+            try{
+                let geoInfo = await axios.get(url);
+                
+                let country = geoInfo.data.results[0].locations[0].adminArea1;
+                
+                let countryInfo = await axios.get('https://restcountries.eu/rest/v2/alpha/' +country );
+              //  console.log(countryInfo);
+                let flagurl = countryInfo.data.flag;
+
+                io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, flagurl));
+
+            }catch(e){
+                console.log(e);
+            }
         }
 
         

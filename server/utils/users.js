@@ -31,5 +31,10 @@ class Users {
         var namesArray = users.map( user => user.name);
         return namesArray;
     }
+    getRooms(){
+        let rooms = this.users.map(x=> x.room);
+        let uniqrooms = [ ... new Set(rooms)];
+        return uniqrooms;
+    }
 }
 module.exports= {Users};

@@ -6,7 +6,9 @@
     font-weight: 300;
     font-size: .95rem;
   }
-  
+  .background{
+    width:100%;
+  }
   ul, li {
     list-style-position: inside;
   }
@@ -150,6 +152,8 @@
   }
   
   .chat__messages {
+    opacity:1.0;
+    z-index:1;
     list-style-type: none;
     padding: 10px;
   }
