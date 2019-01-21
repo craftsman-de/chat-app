@@ -71,8 +71,8 @@ socket.on('newMessage', function(message) {
 socket.on('newLocationMessage', function(message) {
 
     jQuery(".chat__main").css('background-image', 'url('+message.url+')');
-  
-  
+    jQuery(".chat__main").css('background-size', 'contain'); 
+    jQuery(".chat__main").css('background-repeat', 'no-repeat'); 
    
     scrollToBottom();
 

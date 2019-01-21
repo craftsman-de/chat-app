@@ -7,6 +7,6 @@ console.log(date.format('h:mm a'));
 
 let array = [3,4,6,4];
 //array.splice(1,1);
-let newarray = [ ... Set(array) ];
+let newarray = [ ... new Set(array) ];
 console.log(newarray);
 console.log(newarray.length);
