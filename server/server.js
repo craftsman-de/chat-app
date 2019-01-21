@@ -9,10 +9,10 @@ const keys = require('./utils/keys');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 let key;
-if(process.env.NODE_ENV == 'development'){
+if(process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test' ){
     key = require('./utils/keys').mapquestKey;
 }else
-     key = process.env['MAPQUESTKEY'];
+     key = process.env.MAPQUESTKEY;
 
 const app = new express();
 const server = http.createServer(app)
